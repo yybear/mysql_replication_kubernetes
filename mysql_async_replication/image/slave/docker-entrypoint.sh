@@ -53,7 +53,7 @@ if [ "$1" = 'mysqld' ]; then
 		echo 'FLUSH PRIVILEGES ;' >> "$tempSqlFile"
 		if [ ! -z "$MYSQL_MASTER_SERVICE_HOST" ]; then
                 	echo "STOP SLAVE;" >> "$tempSqlFile"
-                  	echo "CHANGE MASTER TO master_host='$MYSQL_MASTER_SERVICE_HOST', master_user='repl', master_password='repl';">> "$tempSqlFile"
+                  	echo "CHANGE MASTER TO master_host='$MYSQL_MASTER_SERVICE_HOST', master_user='repl', master_password='$MYSQL_REPLICATION_PASSWORD';">> "$tempSqlFile"
                   	echo "START SLAVE;" >> "$tempSqlFile"
 		fi
 
