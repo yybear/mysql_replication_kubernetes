@@ -1,0 +1,36 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mysql-master
+  labels:
+    app: mysql-master
+spec:
+  containers:
+  - name: mysql-master
+    image: mysql:master
+    env:
+    - name: MYSQL_USER
+      value: mysql
+    - name: MYSQL_PASSWORD
+      value: mysql
+    - name: MYSQL_DATABASE
+      value: sample
+    - name: MYSQL_ROOT_PASSWORD
+      value: ztesoft
+    - name: MYSQL_REPLICATION_PASSWORD
+      value: ztesoft
+    ports:
+    - containerPort: 3306
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-master
+  labels:
+    app: mysql-master
+spec:
+  ports:
+  - port: 3306
+    name: port0
+  selector:
+    app: mysql-master
