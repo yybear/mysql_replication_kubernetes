@@ -32,8 +32,6 @@ RUN { \
 VOLUME /var/lib/mysql
 
 COPY my.cnf.tmpl /tmp/my.cnf.tmpl
-#COPY random.sh /tmp/random.sh
-#RUN /tmp/random.sh
 
 COPY docker-entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

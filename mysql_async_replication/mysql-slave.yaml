@@ -1,3 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-slave
+  labels:
+    app: mysql-slave
+spec:
+  ports:
+  - port: 3306
+    name: port0
+  selector:
+    app: mysql-slave
+---
 kind: Pod
 apiVersion: v1
 metadata:
@@ -37,22 +51,11 @@ spec:
       value: sample
     - name: MYSQL_ROOT_PASSWORD
       value: ztesoft
+    - name: MYSQL_REPLICATION_PASSWORD
+      value: ztesoft
     - name: MYSQL_SLAVE_SERVER_ID
-      value: slave3
+      value: "1"
     - name: MYSQL_SLAVE_HOSTNAME
-      value: slave3
+      value: slave1
     ports:
     - containerPort: 3306
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: mysql-slave
-  labels:
-    app: mysql-slave
-spec:
-  ports:
-  - port: 3306
-    name: port0
-  selector:
-    app: mysql-slave

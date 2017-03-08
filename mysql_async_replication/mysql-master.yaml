@@ -1,3 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-master
+  labels:
+    app: mysql-master
+spec:
+  ports:
+  - port: 3306
+    name: port0
+  selector:
+    app: mysql-master
+---
 kind: Pod
 apiVersion: v1
 metadata:
@@ -21,16 +34,3 @@ spec:
       value: ztesoft
     ports:
     - containerPort: 3306
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: mysql-master
-  labels:
-    app: mysql-master
-spec:
-  ports:
-  - port: 3306
-    name: port0
-  selector:
-    app: mysql-master
