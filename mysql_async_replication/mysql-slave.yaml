@@ -37,6 +37,10 @@ spec:
       value: sample
     - name: MYSQL_ROOT_PASSWORD
       value: ztesoft
+    - name: MYSQL_SLAVE_SERVER_ID
+      value: slave3
+    - name: MYSQL_SLAVE_HOSTNAME
+      value: slave3
     ports:
     - containerPort: 3306
 ---
