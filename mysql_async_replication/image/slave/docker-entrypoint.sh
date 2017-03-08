@@ -10,6 +10,14 @@ if [ "$1" = 'mysqld' ]; then
 	DATADIR="$("$@" --verbose --help 2>/dev/null | awk '$1 == "datadir" { print $2; exit }')"
 	
 	if [ ! -d "$DATADIR/mysql" ]; then
+		if [ -z "$MYSQL_SLAVE_SERVER_ID" -a -z "$MYSQL_SLAVE_HOSTNAME" ]; then
+			echo >&2 'error: slave server id or hostname not set'
+			echo >&2 '  Did you forget to add -e MYSQL_SLAVE_SERVER_ID=... or MYSQL_SLAVE_HOSTNAME=...?'
+			exit 1
+		fi
+		sed "s/SERVER_ID/$MYSQL_SLAVE_SERVER_ID/g;s/HOSTNAME/$MYSQL_SLAVE_HOSTNAME/g" /tmp/my.cnf.tmpl > /etc/mysql/my.cnf
+
+
 		if [ -z "$MYSQL_ROOT_PASSWORD" -a -z "$MYSQL_ALLOW_EMPTY_PASSWORD" ]; then
 			echo >&2 'error: database is uninitialized and MYSQL_ROOT_PASSWORD not set'
 			echo >&2 '  Did you forget to add -e MYSQL_ROOT_PASSWORD=... ?'
@@ -17,9 +25,9 @@ if [ "$1" = 'mysqld' ]; then
 		fi
 
 		if [ -z "$MYSQL_REPLICATION_PASSWORD" ]; then
-                        echo >&2 'error: database is uninitialized and MYSQL_REPLICATION_PASSWORD not set'
-                        echo >&2 '  Did you forget to add -e MYSQL_REPLICATION_PASSWORD=... ?'
-                        exit 1
+			echo >&2 'error: database is uninitialized and MYSQL_REPLICATION_PASSWORD not set'
+			echo >&2 '  Did you forget to add -e MYSQL_REPLICATION_PASSWORD=... ?'
+			exit 1
 		fi
 
                 echo 'Initializing database'
@@ -52,9 +60,9 @@ if [ "$1" = 'mysqld' ]; then
 		
 		echo 'FLUSH PRIVILEGES ;' >> "$tempSqlFile"
 		if [ ! -z "$MYSQL_MASTER_SERVICE_HOST" ]; then
-                	echo "STOP SLAVE;" >> "$tempSqlFile"
-                  	echo "CHANGE MASTER TO master_host='$MYSQL_MASTER_SERVICE_HOST', master_user='repl', master_password='$MYSQL_REPLICATION_PASSWORD';">> "$tempSqlFile"
-                  	echo "START SLAVE;" >> "$tempSqlFile"
+			echo "STOP SLAVE;" >> "$tempSqlFile"
+			echo "CHANGE MASTER TO master_host='$MYSQL_MASTER_SERVICE_HOST', master_user='repl', master_password='$MYSQL_REPLICATION_PASSWORD';">> "$tempSqlFile"
+			echo "START SLAVE;" >> "$tempSqlFile"
 		fi
 
 		
