@@ -1,0 +1,54 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mysql-slave
+  labels:
+    app: mysql-slave
+  annotations:
+    scheduler.alpha.kubernetes.io/affinity: >
+        {
+          "podAntiAffinity": {
+            "requiredDuringSchedulingRequiredDuringExecution": [
+              {
+                "labelSelector": {
+                  "matchExpressions": [
+                    {
+                      "key": "app",
+                      "operator": "In",
+                      "values": ["mysql-master"]
+                    }
+                  ]
+                },
+                "topologyKey": "kubernetes.io/hostname"
+             }
+            ]
+           }
+         }
+spec:
+  containers:
+  - name: mysql-slave
+    image: mysql:slave
+    env:
+    - name: MYSQL_USER
+      value: mysql
+    - name: MYSQL_PASSWORD
+      value: mysql
+    - name: MYSQL_DATABASE
+      value: sample
+    - name: MYSQL_ROOT_PASSWORD
+      value: ztesoft
+    ports:
+    - containerPort: 3306
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-slave
+  labels:
+    app: mysql-slave
+spec:
+  ports:
+  - port: 3306
+    name: port0
+  selector:
+    app: mysql-slave
