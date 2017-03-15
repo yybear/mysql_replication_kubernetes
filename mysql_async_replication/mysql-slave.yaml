@@ -12,50 +12,34 @@ spec:
   selector:
     app: mysql-slave
 ---
-kind: Pod
 apiVersion: v1
+kind: ReplicationController
 metadata:
-  name: mysql-slave
-  labels:
-    app: mysql-slave
-  annotations:
-    scheduler.alpha.kubernetes.io/affinity: >
-        {
-          "podAntiAffinity": {
-            "requiredDuringSchedulingRequiredDuringExecution": [
-              {
-                "labelSelector": {
-                  "matchExpressions": [
-                    {
-                      "key": "app",
-                      "operator": "In",
-                      "values": ["mysql-master"]
-                    }
-                  ]
-                },
-                "topologyKey": "kubernetes.io/hostname"
-             }
-            ]
-           }
-         }
+  name: mysql-slave 
 spec:
-  containers:
-  - name: mysql-slave
-    image: mysql:slave
-    env:
-    - name: MYSQL_USER
-      value: mysql
-    - name: MYSQL_PASSWORD
-      value: mysql
-    - name: MYSQL_DATABASE
-      value: sample
-    - name: MYSQL_ROOT_PASSWORD
-      value: ztesoft
-    - name: MYSQL_REPLICATION_PASSWORD
-      value: ztesoft
-    - name: MYSQL_SLAVE_SERVER_ID
-      value: "1"
-    - name: MYSQL_SLAVE_HOSTNAME
-      value: slave1
-    ports:
-    - containerPort: 3306
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-slave
+    spec:
+      containers:
+      - name: mysql-slave
+        image: mysql:slave
+        env:
+        - name: MYSQL_USER
+          value: mysql
+        - name: MYSQL_PASSWORD
+          value: mysql
+        - name: MYSQL_DATABASE
+          value: sample
+        - name: MYSQL_ROOT_PASSWORD
+          value: ztesoft
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: ztesoft
+        - name: MYSQL_SLAVE_SERVER_ID
+          value: "1"
+        - name: MYSQL_SLAVE_HOSTNAME
+          value: slave1
+        ports:
+        - containerPort: 3306

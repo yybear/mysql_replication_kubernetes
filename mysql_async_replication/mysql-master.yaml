@@ -1,3 +1,4 @@
+---
 kind: Service
 apiVersion: v1
 metadata:
@@ -11,26 +12,31 @@ spec:
   selector:
     app: mysql-master
 ---
-kind: Pod
 apiVersion: v1
+kind: ReplicationController
 metadata:
-  name: mysql-master
-  labels:
-    app: mysql-master
+  name: mysql-master 
 spec:
-  containers:
-  - name: mysql-master
-    image: mysql:master
-    env:
-    - name: MYSQL_USER
-      value: mysql
-    - name: MYSQL_PASSWORD
-      value: mysql
-    - name: MYSQL_DATABASE
-      value: sample
-    - name: MYSQL_ROOT_PASSWORD
-      value: ztesoft
-    - name: MYSQL_REPLICATION_PASSWORD
-      value: ztesoft
-    ports:
-    - containerPort: 3306
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-master
+    spec:
+      containers:
+      - name: mysql-master
+        image: mysql:master
+        env:
+        - name: MYSQL_USER
+          value: mysql
+        - name: MYSQL_PASSWORD
+          value: mysql
+        - name: MYSQL_DATABASE
+          value: sample
+        - name: MYSQL_ROOT_PASSWORD
+          value: ztesoft
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: ztesoft
+        ports:
+        - containerPort: 3306
+  
